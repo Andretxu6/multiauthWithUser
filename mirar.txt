@@ -1,0 +1,3 @@
+app/http/middleware/redirectIfAuthenticated
+app/exceptions/handler
+database/seeds
