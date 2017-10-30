@@ -19,6 +19,7 @@ class UsersTableSeeder extends Seeder
 
         $admin = [
             'name' => 'admin',
+            'identificador' => 12345678,
             'email' => 'admin@admin.com',
             'password' => bcrypt('zubiri')
         ];
