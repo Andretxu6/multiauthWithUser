@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
 use App\Mail\welcome;
+use Illuminate\Auth\Events\Registered;
+
+use App\Jobs\SendVerificationEmail;
+
+
 use Illuminate\Support\Facades\Mail;
 
+use App\Mail\EmailVerification;
 
 class RegisterController extends Controller
 {
@@ -70,15 +77,26 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'email_token' => base64_encode($data['email']),
         ]);
 
-        //send verification mail to user
-        //---------------------------------------------------------
-        if ($user != ""){
-            Mail::to($data['email'])
-                ->send(new welcome());
-        }
-
         return $user;
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+        event(new Registered($user = $this->create($request->all())));
+        dispatch(new SendVerificationEmail($user));
+        return view('user.verification.verification');
+    }
+
+    public function verify($token)
+    {
+        $user = User::where('email_token', $token)->first();
+        $user->verificado = true;
+        if ($user->save()) {
+            return view('user.verification.emailConfirm', ['user' => $user]);
+        }
     }
 }

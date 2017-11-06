@@ -32,3 +32,5 @@ Route::prefix('admin')->group(function() {
     Route::get('/password/reset/{token}', 'AuthAdmin\ResetPasswordController@showResetForm')->name('admin.password.reset');
     Route::post('/password/reset', 'AuthAdmin\ResetPasswordController@reset');
 });
+
+Route::get('/verifyemail/{token}', 'Auth\RegisterController@verify');
