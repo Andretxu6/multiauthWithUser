@@ -13,6 +13,8 @@ use Illuminate\Auth\Events\Registered;
 
 use App\Jobs\SendVerificationEmail;
 
+use Illuminate\Support\Facades\DB;
+
 
 use Illuminate\Support\Facades\Mail;
 
@@ -65,19 +67,17 @@ class RegisterController extends Controller
         ]);
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\User
-     */
+
     protected function create(array $data)
     {
+        $rol = DB::table('rols')->where('rol_name', 'invitado')->first();
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'email_token' => base64_encode($data['email']),
+            'rol_id' => 1
         ]);
 
         return $user;

@@ -15,6 +15,9 @@
                     @endif
 
                     You are logged in, User!
+                    <br/>
+                    Rol:{{ Auth::user()-> rol_id }}
+
                 </div>
             </div>
         </div>

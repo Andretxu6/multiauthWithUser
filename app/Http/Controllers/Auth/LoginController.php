@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -44,16 +46,33 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    /** Por Sonia: No hace falta para nada
 
-    public function userLogout(Request $request)
+    public function login(Request $request)
     {
-        Auth::guard('admin')->logout();
+        $this->validate($request, [
+            'email' => 'required|min:1',
+            'password' => 'required|min:6'
+        ]);
 
-//        $request->session()->invalidate();
+        $credential = [
+            'email' => $request->email,
+            'password' => $request->password,
+        ];
 
-        return redirect('/');
+        // Attempt to log the user in
+        if (Auth::attempt($credential)){
+            // If login successful, then redirect to their intended location y si esta verificado
+            $user = User::where('email', $request->email)->first();
+            if ($user->verificado){
+                return redirect()->intended(route('home'));
+            } else {
+                Auth::logout();
+                return view('user.verification.sinVerificar');
+            }
+        }
+
+        // If Unsuccessful, then redirect back to the login with the form data
+        return redirect()->back()->withInput($request->only('email', 'remember'));
     }
-     */
 }
 

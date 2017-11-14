@@ -24,7 +24,20 @@ class UsersTableSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => bcrypt('zubiri')
         ];
+
+        $rol = [
+            'rol_name' => 'invitado',
+            'description' => 'usuario invitado'
+        ];
+
+        $rolOtro = [
+            'rol_name' => 'usuario',
+            'description' => 'usuario normal'
+        ];
+
         DB::table('users')->insert($user);
         DB::table('admins')->insert($admin);
+        DB::table('rols')->insert($rol);
+        DB::table('rols')->insert($rolOtro);
     }
 }
